@@ -20,4 +20,11 @@ public class MainClassTest {
          Assertions.assertEquals(expected, MainClass.getClassNumber(), "number is wrong. " +
                  "Expected: %d, Actual: %d,".formatted(expected, MainClass.getClassNumber()));
     }
+
+    @Test
+    void testGetClassString(){
+        final String expected = "hello";
+        Assertions.assertTrue(MainClass.getClassString().toLowerCase().contains(expected),
+                "%s is not present in text: %s".formatted(expected, MainClass.getClassString()));
+    }
 }

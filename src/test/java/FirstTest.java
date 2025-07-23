@@ -14,6 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class FirstTest {
@@ -479,6 +480,28 @@ public class FirstTest {
         assertElementNotPresent(searchResultItems, "Search result for %s is  not empty".formatted(searchInput));
     }
 
+    @Test
+    void checkSearchResultsContainsSearchInputTextTest() {
+        final String searchInput = "Java";
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/fragment_onboarding_skip_button"),
+                "can't find Skip button", 5);
+
+        waitForElementAndClick(
+                By.xpath("//*[@text = 'Search Wikipedia']"),
+                "can't find search input", 5);
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[@text = 'Search Wikipedia']"),
+                searchInput,
+                "can't find search input", 5);
+
+        final By searchResultItems = By.xpath("//*[@resource-id ='org.wikipedia:id/search_results_display']" +
+                "//*[@resource-id = 'org.wikipedia:id/page_list_item_title']");
+
+        assertAllElementsContainsText(searchResultItems, searchInput);
+    }
+
     private WebElement waitForElementPresent(By by, String errorMessage, long timeoutInSeconds) {
         final WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
         wait.withMessage(errorMessage + "\n");
@@ -642,5 +665,17 @@ public class FirstTest {
                 "Element %s not found".formatted(by.toString()));
         Assertions.assertEquals(expectedText, actualText,
                 "Texts are different. Expected: %s Actual: %s".formatted(expectedText, actualText));
+    }
+
+    private void assertAllElementsContainsText(By by, String expectedText) {
+        final WebDriverWait wait = new WebDriverWait(driver, 5);
+        wait.withMessage("cant find element " + by.toString() + "\n");
+        final List<WebElement> elements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(by));
+
+        for (int i = 0; i < elements.size(); i++) {
+            final String actualText = elements.get(i).getText();
+            Assertions.assertTrue(actualText.contains(expectedText),
+                    "Element by number %d with text %s doesnt contains %s".formatted(i, actualText, expectedText));
+        }
     }
 }

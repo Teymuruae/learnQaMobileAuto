@@ -322,7 +322,6 @@ public class FirstTest {
         Assertions.assertTrue(amountOfSearchResult > 0, "Search result for %s is empty".formatted(searchInput));
     }
 
-
     @Test
     void amountOfEmptySearchTest() {
         waitForElementAndClick(
@@ -444,6 +443,40 @@ public class FirstTest {
                 "can't find Skip button", 5);
 
         assertElementHasText(By.xpath("//*[@text = 'Search Wikipedia']"), "Search Wikipedia");
+    }
+
+    @Test
+    void cancelSearchTest2() {
+        final String searchInput = "Java";
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/fragment_onboarding_skip_button"),
+                "can't find Skip button", 5);
+
+        waitForElementAndClick(
+                By.xpath("//*[@text = 'Search Wikipedia']"),
+                "can't find search input", 5);
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[@text = 'Search Wikipedia']"),
+                searchInput,
+                "can't find search input", 5);
+
+        final By searchResultItems = By.xpath("//*[@resource-id ='org.wikipedia:id/search_results_display']" +
+                "//*[@resource-id = 'org.wikipedia:id/page_list_item_title']");
+
+        waitForElementPresent(
+                searchResultItems,
+                "Cant find anything by the request " + searchInput
+        );
+
+        int amountOfSearchResult = getAmountOfElements(searchResultItems);
+        Assertions.assertTrue(amountOfSearchResult > 0, "Search result for %s is empty".formatted(searchInput));
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/search_close_btn"),
+                "can't find X to cancel search", 5);
+
+        assertElementNotPresent(searchResultItems, "Search result for %s is  not empty".formatted(searchInput));
     }
 
     private WebElement waitForElementPresent(By by, String errorMessage, long timeoutInSeconds) {

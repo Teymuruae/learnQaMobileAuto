@@ -382,7 +382,7 @@ public class FirstTest {
 
         driver.rotate(ScreenOrientation.LANDSCAPE);
 
-        String titleAfterRotation  = waitForElementAndGetAttributeValue(
+        String titleAfterRotation = waitForElementAndGetAttributeValue(
                 By.xpath("//android.view.View[@content-desc='Java (programming language)']"),
                 "text",
                 "Cant find topic title"
@@ -393,7 +393,7 @@ public class FirstTest {
 
         driver.rotate(ScreenOrientation.PORTRAIT);
 
-        String titleAfterSecondRotation  = waitForElementAndGetAttributeValue(
+        String titleAfterSecondRotation = waitForElementAndGetAttributeValue(
                 By.xpath("//android.view.View[@content-desc='Java (programming language)']"),
                 "text",
                 "Cant find topic title"
@@ -435,6 +435,15 @@ public class FirstTest {
                 By.xpath("//android.view.View[@content-desc='Java (programming language)']"),
                 "Cant find topic title after expand the app"
         );
+    }
+
+    @Test
+    void searchFieldPlaceholderTextTest() {
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/fragment_onboarding_skip_button"),
+                "can't find Skip button", 5);
+
+        assertElementHasText(By.xpath("//*[@text = 'Search Wikipedia']"), "Search Wikipedia");
     }
 
     private WebElement waitForElementPresent(By by, String errorMessage, long timeoutInSeconds) {
@@ -587,5 +596,18 @@ public class FirstTest {
         final WebElement element = waitForElementPresent(by, errorMessage);
 
         return element.getAttribute(attributeName);
+    }
+
+    private void assertElementHasText(By by, String expectedText, String errorMessage) {
+        final String actualText = waitForElementAndGetAttributeValue(by, "text",
+                "Element %s not found".formatted(by.toString()));
+        Assertions.assertEquals(expectedText, actualText, errorMessage);
+    }
+
+    private void assertElementHasText(By by, String expectedText) {
+        final String actualText = waitForElementAndGetAttributeValue(by, "text",
+                "Element %s not found".formatted(by.toString()));
+        Assertions.assertEquals(expectedText, actualText,
+                "Texts are different. Expected: %s Actual: %s".formatted(expectedText, actualText));
     }
 }

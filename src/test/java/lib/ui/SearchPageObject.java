@@ -54,7 +54,8 @@ public class SearchPageObject extends MainPageObject {
 
     public ArticlePageObject clickArticle(String articleText) {
         waitForElementAndClick(
-                By.xpath("//*[@class = 'android.view.ViewGroup']//*[@text = '%s']".formatted(articleText)),
+                By.xpath("//*[@class = 'android.view.ViewGroup']//*[@text = '%s' and not(@resource-id = 'org.wikipedia:id/search_src_text')]"
+                        .formatted(articleText)),
                 "Cant find article " + articleText,
                 5
         );

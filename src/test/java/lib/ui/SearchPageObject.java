@@ -1,6 +1,7 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 
 public class SearchPageObject extends MainPageObject {
@@ -71,6 +72,12 @@ public class SearchPageObject extends MainPageObject {
         return getAmountOfElements(SEARCH_RESULT_LIST_ELEMENTS);
     }
 
+    public SearchPageObject assertSearchResultNotEmpty(){
+        Assertions.assertTrue(getAmountOfFoundArticles() > 0, "Search result should be not empty, but" +
+                "was empty");
+        return this;
+    }
+
     public SearchPageObject waitForEmptyResultsLabel() {
         waitForElementPresent(
                 SEARCH_RESULT_EMPTY_LABEL,
@@ -81,6 +88,11 @@ public class SearchPageObject extends MainPageObject {
 
     public SearchPageObject assertThereIsNoResultOfSearch() {
         assertElementNotPresent(SEARCH_RESULT_LIST_ELEMENTS, "Search result is not empty, but suppose to be");
+        return this;
+    }
+
+    public SearchPageObject assertAllSearchResultsContainText(String text){
+        assertAllElementsContainsText(SEARCH_RESULT_LIST_ELEMENTS, text);
         return this;
     }
 }

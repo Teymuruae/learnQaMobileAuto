@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SearchPageTest extends CoreTestCase {
 
     private MainPageObject mainPageObject = new MainPageObject(driver);
@@ -88,5 +91,23 @@ public class SearchPageTest extends CoreTestCase {
                 .initSearchInput()
                 .typeSearchLine(searchInput)
                 .assertAllSearchResultsContainText(searchInput);
+    }
+
+    @Test
+    void checkAllSearchResultArticlesTitlesAndDescTest() {
+        final String searchInput = "Java";
+
+        final Map<String, String> titlesDesc = new HashMap<>();
+        titlesDesc.put("Java (programming language)", "Object-oriented programming language");
+        titlesDesc.put("JavaScript", "High-level programming language");
+        titlesDesc.put("Java version history", "List of versions of the Java programming language");
+        titlesDesc.put("Java", "Region and island in Indonesia");
+
+        mainPageObject.skip();
+        searchPageObject
+                .initSearchInput()
+                .typeSearchLine(searchInput);
+
+        titlesDesc.forEach((k,v) -> searchPageObject.waitForElementByTitleAndDescription(k,v));
     }
 }

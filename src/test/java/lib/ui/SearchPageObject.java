@@ -14,7 +14,10 @@ public class SearchPageObject extends MainPageObject {
             SEARCH_CANCEL_BUTTON = By.id("org.wikipedia:id/search_close_btn"),
             SEARCH_RESULT_EMPTY_LABEL = By.xpath("//android.widget.TextView[@text = 'No results']");
 
-    private final String SEARCH_RESULT = "//*[@class = 'android.view.ViewGroup']//*[@text = '%s']";
+    private final String
+            SEARCH_RESULT = "//*[@class = 'android.view.ViewGroup']//*[@text = '%s']",
+    SEARCH_RESULT_BY_TITLE_AND_DESC = "//*[@text = '%s' and @resource-id = " +
+            "'org.wikipedia:id/page_list_item_title']//following-sibling::android.widget.TextView[@text = '%s']";
 
     public SearchPageObject(AppiumDriver driver) {
         super(driver);
@@ -35,6 +38,13 @@ public class SearchPageObject extends MainPageObject {
     public SearchPageObject waitForSearchResult(String resultText) {
         waitForElementPresent(
                 By.xpath(SEARCH_RESULT.formatted(resultText)), "Cant find search result text: %s".formatted(resultText));
+        return this;
+    }
+
+    public SearchPageObject waitForElementByTitleAndDescription(String title, String description){
+        waitForElementPresent(By.xpath(SEARCH_RESULT_BY_TITLE_AND_DESC.formatted(title, description)),
+                "Search result with title %s and description %s not found"
+                        .formatted(title, description));
         return this;
     }
 

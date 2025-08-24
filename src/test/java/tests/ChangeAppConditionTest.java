@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ScreenOrientation;
 
+import javax.xml.xpath.XPath;
+
 public class ChangeAppConditionTest extends CoreTestCase {
 
     private MainPageObject mainPageObject = new MainPageObject(driver);
@@ -27,7 +29,7 @@ public class ChangeAppConditionTest extends CoreTestCase {
                    .waitForTitleElement(articleTitle);
 
            String titleBeforeRotation = mainPageObject.waitForElementAndGetAttributeValue(
-                   By.xpath("//android.view.View[@content-desc='Java (programming language)']"),
+                   MainPageObject.XPATH + "//android.view.View[@content-desc='Java (programming language)']",
                    "name",
                    "Cant find topic title"
            );
@@ -35,7 +37,7 @@ public class ChangeAppConditionTest extends CoreTestCase {
            rotateScreenLandscape();
 
            String titleAfterRotation = mainPageObject.waitForElementAndGetAttributeValue(
-                   By.xpath("//android.view.View[@content-desc='Java (programming language)']"),
+                   MainPageObject.XPATH + "//android.view.View[@content-desc='Java (programming language)']",
                    "name",
                    "Cant find topic title"
            );
@@ -46,7 +48,7 @@ public class ChangeAppConditionTest extends CoreTestCase {
            rotateScreenPortrait();
 
            String titleAfterSecondRotation = mainPageObject.waitForElementAndGetAttributeValue(
-                   By.xpath("//android.view.View[@content-desc='Java (programming language)']"),
+                   MainPageObject.XPATH + "//android.view.View[@content-desc='Java (programming language)']",
                    "name",
                    "Cant find topic title"
            );

@@ -1,12 +1,12 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
-import org.openqa.selenium.By;
 
 public class NavigationUi extends MainPageObject {
 
-    private By
-            MY_LIST_BUTTON = By.id("org.wikipedia:id/nav_tab_reading_lists");
+    private final String
+            MY_LIST_BUTTON = ID + "org.wikipedia:id/nav_tab_reading_lists",
+            IMAGE_BUTTON = XPATH + "//android.widget.ImageButton[@content-desc='Navigate up']";
 
     public NavigationUi(AppiumDriver driver) {
         super(driver);
@@ -14,7 +14,7 @@ public class NavigationUi extends MainPageObject {
 
     public void navigateUp() {
         waitForElementAndClick(
-                By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']"),
+                IMAGE_BUTTON,
                 "Cant find 'Navigate up' button",
                 5
         );

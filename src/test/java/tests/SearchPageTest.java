@@ -65,8 +65,8 @@ public class SearchPageTest extends CoreTestCase {
     void searchFieldPlaceholderTextTest() {
         mainPageObject
                 .skip()
-                .assertElementHasText(By
-                        .xpath("//*[@text = 'Search Wikipedia']"), "Search Wikipedia");
+                .assertElementHasText(
+                        MainPageObject.XPATH +     "//*[@text = 'Search Wikipedia']", "Search Wikipedia");
     }
 
     @Test

@@ -1,7 +1,6 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -28,8 +27,9 @@ public class ArticlePageObject extends MainPageObject {
         return waitForElementPresent(TITLE.formatted(title), "Cant find article title %s on page".formatted(title), 10);
     }
 
-//    public WebElement assertTitleIsPresent(String title){
-//    }
+    public void assertTitleIsPresent(String title) {
+        assertElementIsPresent(TITLE.formatted(title), "Cannot find title " + title);
+    }
 
     public ArticlePageObject swipeToFooter() {
         swipeUpToFindElement(FOOTER_ELEMENT, "Cant find the end of the article");

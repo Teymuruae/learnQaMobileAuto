@@ -51,4 +51,14 @@ public class ArticleTest extends CoreTestCase {
 
         articlePageObject.swipeToFooter();
     }
+
+    @Test
+    void assertArticleTitleIsPresentTest(){
+        mainPageObject.skip();
+        searchPageObject
+                .initSearchInput()
+                .typeSearchLine("Java")
+                .clickArticle("Object-oriented programming language")
+                .assertTitleIsPresent("Java (programming language)");
+    }
 }

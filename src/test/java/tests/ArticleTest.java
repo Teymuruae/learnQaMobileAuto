@@ -4,6 +4,8 @@ import lib.CoreTestCase;
 import lib.ui.ArticlePageObject;
 import lib.ui.MainPageObject;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.ArticlePageObjectFactory;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
@@ -11,8 +13,8 @@ import org.openqa.selenium.By;
 public class ArticleTest extends CoreTestCase {
 
     private MainPageObject mainPageObject = new MainPageObject(driver);
-    private SearchPageObject searchPageObject = new SearchPageObject(driver);
-    private ArticlePageObject articlePageObject = new ArticlePageObject(driver);
+    private SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
+    private ArticlePageObject articlePageObject = ArticlePageObjectFactory.get(driver);
 
     @Test
     void javaTopicArticleTextTest() {

@@ -1,37 +1,49 @@
 package tests;
 
 import lib.CoreTestCase;
+import lib.Platform;
 import lib.ui.*;
+import lib.ui.factories.ArticlePageObjectFactory;
+import lib.ui.factories.MyListPageObjectFactory;
+import lib.ui.factories.NavigationUiPageObjectFactory;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.jupiter.api.Test;
 
 public class MyListTest extends CoreTestCase {
 
     private MainPageObject mainPageObject = new MainPageObject(driver);
-    private SearchPageObject searchPageObject = new SearchPageObject(driver);
-    private ArticlePageObject articlePageObject = new ArticlePageObject(driver);
-    private NavigationUi navigationUi = new NavigationUi(driver);
-    private MyListPageObject myListPageObject = new MyListPageObject(driver);
+    private SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
+    private ArticlePageObject articlePageObject = ArticlePageObjectFactory.get(driver);
+    private NavigationUi navigationUi = NavigationUiPageObjectFactory.get(driver);
+    private MyListPageObject myListPageObject = MyListPageObjectFactory.get(driver);
 
     @Test
     void swipeLeftTest() {
         final String myListFolder = "JavaList";
         final String articleTitle = "Java (programming language)";
         mainPageObject.skip();
+
         searchPageObject
                 .initSearchInput()
                 .typeSearchLine("Java")
                 .clickArticle("Object-oriented programming language")
                 .waitForTitleElement(articleTitle);
-        articlePageObject.addArticleToMyNewList(myListFolder);
 
-        for (int i = 0; i < 2; i++) {
-            navigationUi.navigateUp();
-        }
+        articlePageObject
+                .addArticleToMyNewList(myListFolder)
+                .toMainMenu(articleTitle, 2);
+
         navigationUi.clickMyList();
+
+        if (Platform.getInstance().isAndroid()) {
+            myListPageObject
+                    .openFolderByName(myListFolder);
+        } else {
+            myListPageObject.closeIosModalWindow();
+        }
+
         myListPageObject
-                .openFolderByName(myListFolder)
-                .waitForArticleToAppearByTitle(articleTitle)
-                .swipeByArticleTitleToDelete(articleTitle);
+                .removeArticleByTitle(articleTitle);
     }
 
     @Test
@@ -63,7 +75,7 @@ public class MyListTest extends CoreTestCase {
         myListPageObject
                 .openFolderByName(myListFolder)
                 .assertAllArticleTitleTexts(javaArticleTitle, javaVersionHistoryArticleTitle)
-                .swipeByArticleTitleToDelete(javaArticleTitle)
+                .removeArticleByTitle(javaArticleTitle)
                 .assertAllArticleTitleTexts(javaVersionHistoryArticleTitle)
                 .enterArticleByTitle(javaVersionHistoryArticleTitle)
                 .waitForTitleElement(javaVersionHistoryArticleTitle);

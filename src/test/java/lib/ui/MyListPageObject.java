@@ -1,16 +1,19 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import lib.Platform;
+import lib.ui.factories.ArticlePageObjectFactory;
 import org.junit.jupiter.api.Assertions;
-import org.openqa.selenium.By;
 
-public class MyListPageObject extends MainPageObject {
+public abstract class MyListPageObject extends MainPageObject {
 
-    private String
-            FOLDER_BY_NAME_TPL = XPATH + "//*[@text = '%s']",
-            ARTICLE_DESCRIPTION = XPATH + "//*[@resource-id = 'org.wikipedia:id/page_list_item_description'][@text = '%s']",
-            ARTICLE_TITLE = XPATH + "//*[@resource-id = 'org.wikipedia:id/page_list_item_title'][@text = '%s']",
-            ARTICLE_TITLES = XPATH + "//*[@resource-id = 'org.wikipedia:id/page_list_item_title']";
+    protected static String
+            FOLDER_BY_NAME_TPL,
+            ARTICLE_DESCRIPTION,
+            ARTICLE_TITLE,
+            ARTICLE_TITLES,
+            EDIT_BUTTON, //кнопка "Править". Есть только в ios;
+            DONT_SAVE_BUTTON;
 
     private AppiumDriver driver;
 
@@ -80,14 +83,21 @@ public class MyListPageObject extends MainPageObject {
     public ArticlePageObject enterArticleByTitle(String articleTitle) {
         waitForElementAndClick(ARTICLE_TITLE.formatted(articleTitle),
                 "cant find article by title %s".formatted(articleTitle), 5);
-        return new ArticlePageObject(driver);
+        return ArticlePageObjectFactory.get(driver);
     }
 
-    public MyListPageObject swipeByArticleTitleToDelete(String articleTitle) {
+    public MyListPageObject removeArticleByTitle(String articleTitle) {
         final String savedPage = ARTICLE_TITLE.formatted(articleTitle);
 
         waitForArticleToAppearByTitle(articleTitle);
-        swipeLeft2(savedPage, "Cant find '%s' saved page".formatted(articleTitle));
+        if (Platform.getInstance().isAndroid()) {
+            swipeLeft2(savedPage, "Cant find '%s' saved page".formatted(articleTitle));
+        } else {
+            waitForElementAndClick(EDIT_BUTTON, "Edit button not found", 5);
+            enterArticleByTitle(articleTitle);
+            waitForElementAndClick(DONT_SAVE_BUTTON, "Dont save button not fount", 5);
+        }
+
         waitForArticleToDisappearByTitle(articleTitle);
         return this;
     }

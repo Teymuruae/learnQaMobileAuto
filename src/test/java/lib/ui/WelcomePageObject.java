@@ -4,6 +4,15 @@ import io.appium.java_client.AppiumDriver;
 
 public class WelcomePageObject extends MainPageObject {
 
+    public WelcomePageObject clickSkip() {
+        waitForElementAndClick(
+                XPATH + "//XCUIElementTypeStaticText[@name='Пропустить']",
+                "Cannot find button 'Пропустить'",
+                10
+        );
+        return this;
+    }
+
     public WelcomePageObject(AppiumDriver driver) {
         super(driver);
     }

@@ -3,9 +3,9 @@ package tests;
 import lib.CoreTestCase;
 import lib.ui.MainPageObject;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Map;
 public class SearchPageTest extends CoreTestCase {
 
     private MainPageObject mainPageObject = new MainPageObject(driver);
-    private SearchPageObject searchPageObject = new SearchPageObject(driver);
+    private SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
 
     @Test
     public void searchTest() {
@@ -30,9 +30,9 @@ public class SearchPageTest extends CoreTestCase {
         searchPageObject
                 .initSearchInput()
                 .typeSearchLine("Java")
-                .waitForCancelSearchButtonToAppear()
-                .clickCancelSearchButton()
-                .waitForCancelSearchButtonToDisappear();
+                .waitForSearchRemoveXButtonToAppear()
+                .clickSearchRemoveXButton()
+                .waitForSearchRemoveXButtonToDisappear();
     }
 
     @Test
@@ -78,7 +78,7 @@ public class SearchPageTest extends CoreTestCase {
                 .initSearchInput()
                 .typeSearchLine(searchInput)
                 .assertSearchResultNotEmpty()
-                .clickCancelSearchButton()
+                .clickSearchRemoveXButton()
                 .assertThereIsNoResultOfSearch();
     }
 

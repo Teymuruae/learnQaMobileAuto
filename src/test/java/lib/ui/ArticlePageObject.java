@@ -1,22 +1,24 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
-import org.openqa.selenium.WebDriver;
+import lib.Platform;
+import lib.ui.factories.NavigationUiPageObjectFactory;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.openqa.selenium.WebElement;
 
-public class ArticlePageObject extends MainPageObject {
+public abstract class ArticlePageObject extends MainPageObject {
 
-    private final WebDriver driver;
+    private final AppiumDriver driver;
 
-    private final String
-            FOOTER_ELEMENT = XPATH + "//android.view.View[@content-desc='View article in browser']",
-            SAVE_ARTICLE_BUTTON = ID + "org.wikipedia:id/page_save",
-            ADD_TO_ANOTHER_LIST_BUTTON = XPATH + "//android.widget.TextView[@text = 'Add to another reading list']",
-            CREATE_NEW_READING_LIST_BUTTON = ID + "org.wikipedia:id/create_button",
-            NAME_OF_READING_LIST_INPUT_FIELD = ID + "org.wikipedia:id/text_input",
-            CREATE_NEW_READING_LIST_MODAL_OK_BUTTON = XPATH + "//android.widget.Button[@text = 'OK']",
-            READING_LIST_FOLDER = XPATH + "//android.widget.TextView[@text='%s' and @resource-id = 'org.wikipedia:id/item_title' ]",
-            TITLE = XPATH + "//android.view.View[@content-desc='%s']";
+    protected static String
+            FOOTER_ELEMENT,
+            SAVE_ARTICLE_BUTTON,
+            ADD_TO_ANOTHER_LIST_BUTTON,
+            CREATE_NEW_READING_LIST_BUTTON,
+            NAME_OF_READING_LIST_INPUT_FIELD,
+            CREATE_NEW_READING_LIST_MODAL_OK_BUTTON,
+            READING_LIST_FOLDER,
+            TITLE;
 
     public ArticlePageObject(AppiumDriver driver) {
         super(driver);
@@ -32,43 +34,60 @@ public class ArticlePageObject extends MainPageObject {
     }
 
     public ArticlePageObject swipeToFooter() {
-        swipeUpToFindElement(FOOTER_ELEMENT, "Cant find the end of the article");
+        if (Platform.getInstance().isAndroid()) {
+            swipeToFindElement(FOOTER_ELEMENT, "Cant find the end of the article", Direction.UP);
+        } else {
+            swipeTillElementAppear(FOOTER_ELEMENT, "Cant find the end of the article", 40, Direction.UP);
+        }
+        return this;
+    }
+
+    public ArticlePageObject swipeToTitle(String title) {
+        if (Platform.getInstance().isAndroid()) {
+            swipeToFindElement(TITLE.formatted(title), "Cant find the title of the article", Direction.DOWN);
+        } else {
+            swipeTillElementAppear(TITLE.formatted(title), "Cant find the title of the article", 40, Direction.DOWN);
+        }
         return this;
     }
 
     public ArticlePageObject addArticleToMyNewList(String folderName) {
-        WebElement saveButton = waitForElementAndClick(
-                SAVE_ARTICLE_BUTTON,
-                "Cant find save page button",
-                5
-        );
+        if (Platform.getInstance().isIos()) {
+            waitForElementAndClick(SAVE_ARTICLE_BUTTON, "Cannot find save article button", 5);
+        } else {
+            WebElement saveButton = waitForElementAndClick(
+                    SAVE_ARTICLE_BUTTON,
+                    "Cant find save page button",
+                    5
+            );
 
-        saveButton.click();
+            saveButton.click();
 
-        waitForElementAndClick(
-                ADD_TO_ANOTHER_LIST_BUTTON,
-                "Cant find 'Add to another reading list' button",
-                5
-        );
+            waitForElementAndClick(
+                    ADD_TO_ANOTHER_LIST_BUTTON,
+                    "Cant find 'Add to another reading list' button",
+                    5
+            );
 
-        waitForElementAndClick(
-                CREATE_NEW_READING_LIST_BUTTON,
-                "Cant find 'Create' button",
-                5
-        );
+            waitForElementAndClick(
+                    CREATE_NEW_READING_LIST_BUTTON,
+                    "Cant find 'Create' button",
+                    5
+            );
 
-        waitForElementAndSendKeys(
-                NAME_OF_READING_LIST_INPUT_FIELD,
-                folderName,
-                "Cant find 'Name of list' input field",
-                5
-        );
+            waitForElementAndSendKeys(
+                    NAME_OF_READING_LIST_INPUT_FIELD,
+                    folderName,
+                    "Cant find 'Name of list' input field",
+                    5
+            );
 
-        waitForElementAndClick(
-                CREATE_NEW_READING_LIST_MODAL_OK_BUTTON,
-                "Cant find 'Ok' button",
-                5
-        );
+            waitForElementAndClick(
+                    CREATE_NEW_READING_LIST_MODAL_OK_BUTTON,
+                    "Cant find 'Ok' button",
+                    5
+            );
+        }
         return this;
     }
 
@@ -93,5 +112,22 @@ public class ArticlePageObject extends MainPageObject {
                 5
         );
         return this;
+    }
+
+    public void toMainMenu(String title, int returnBackTimes) {
+        final NavigationUi navigationUi = NavigationUiPageObjectFactory.get(driver);
+
+        swipeToTitle(title);
+        if (Platform.getInstance().isIos()) {
+            final SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
+            for (int i = 0; i < returnBackTimes - 1; i++) {
+                navigationUi.navigateUp();
+            }
+            searchPageObject.clickSearchCancelButton();
+        } else {
+            for (int i = 0; i < returnBackTimes; i++) {
+                navigationUi.navigateUp();
+            }
+        }
     }
 }

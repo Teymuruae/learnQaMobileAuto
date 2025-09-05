@@ -1,6 +1,7 @@
-package tests.iOS;
+package tests;
 
 import lib.CoreTestCase;
+import lib.Platform;
 import lib.ui.WelcomePageObject;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +11,9 @@ public class GetStartedTest extends CoreTestCase {
 
     @Test
     void passThroughWelcomeTest() {
+        if (Platform.getInstance().isAndroid()) {
+            return;
+        }
         welcomePageObject
                 .waitForLearnMoreLink()
                 .clickNextButton()

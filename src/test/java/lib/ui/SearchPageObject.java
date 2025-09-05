@@ -1,21 +1,21 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import lib.ui.factories.ArticlePageObjectFactory;
 import org.junit.jupiter.api.Assertions;
-import org.openqa.selenium.By;
 
-public class SearchPageObject extends MainPageObject {
+public abstract class SearchPageObject extends MainPageObject {
+
     private AppiumDriver driver;
 
-    private final String
-            SEARCH_RESULT_LIST_ELEMENTS = XPATH + "//*[@resource-id ='org.wikipedia:id/search_results_display']" +
-            "//*[@resource-id = 'org.wikipedia:id/page_list_item_title']",
-            SEARCH_INPUT_FIELD = XPATH + "//*[@text = 'Search Wikipedia']",
-            SEARCH_CANCEL_BUTTON = ID + "org.wikipedia:id/search_close_btn",
-            SEARCH_RESULT_EMPTY_LABEL = XPATH + "//android.widget.TextView[@text = 'No results']",
-            SEARCH_RESULT = XPATH + "//*[@class = 'android.view.ViewGroup']//*[@text = '%s']",
-            SEARCH_RESULT_BY_TITLE_AND_DESC = XPATH + "//*[@text = '%s' and @resource-id = " +
-                    "'org.wikipedia:id/page_list_item_title']//following-sibling::android.widget.TextView[@text = '%s']";
+    protected static String
+            SEARCH_RESULT_LIST_ELEMENTS,
+            SEARCH_INPUT_FIELD,
+            SEARCH_REMOVE_X_BUTTON,
+            SEARCH_RESULT_EMPTY_LABEL,
+            SEARCH_RESULT,
+            SEARCH_CANCEL_BUTTON,
+            SEARCH_RESULT_BY_TITLE_AND_DESC;
 
     public SearchPageObject(AppiumDriver driver) {
         super(driver);
@@ -46,29 +46,34 @@ public class SearchPageObject extends MainPageObject {
         return this;
     }
 
-    public SearchPageObject waitForCancelSearchButtonToAppear() {
-        waitForElementPresent(SEARCH_CANCEL_BUTTON, "can't find X to cancel search");
+    public SearchPageObject waitForSearchRemoveXButtonToAppear() {
+        waitForElementPresent(SEARCH_REMOVE_X_BUTTON, "can't find X to cancel search");
         return this;
     }
 
-    public SearchPageObject waitForCancelSearchButtonToDisappear() {
-        waitForElementNotPresent(SEARCH_CANCEL_BUTTON, "X is still present on the page", 5);
+    public SearchPageObject waitForSearchRemoveXButtonToDisappear() {
+        waitForElementNotPresent(SEARCH_REMOVE_X_BUTTON, "X is still present on the page", 5);
         return this;
     }
 
-    public SearchPageObject clickCancelSearchButton() {
-        waitForElementAndClick(SEARCH_CANCEL_BUTTON, "can't find X to cancel search", 5);
+    public SearchPageObject clickSearchRemoveXButton() {
+        waitForElementAndClick(SEARCH_REMOVE_X_BUTTON, "can't find X to cancel search", 5);
+        return this;
+    }
+
+    public SearchPageObject clickSearchCancelButton() {
+        waitForElementAndClick(SEARCH_CANCEL_BUTTON, "can't find cancel search button", 5);
         return this;
     }
 
     public ArticlePageObject clickArticle(String articleText) {
         waitForElementAndClick(
-                XPATH + "//*[@class = 'android.view.ViewGroup']//*[@text = '%s' and not(@resource-id = 'org.wikipedia:id/search_src_text')]"
+                SEARCH_RESULT
                         .formatted(articleText),
                 "Cant find article " + articleText,
                 5
         );
-        return new ArticlePageObject(driver);
+        return ArticlePageObjectFactory.get(driver);
     }
 
     public int getAmountOfFoundArticles() {

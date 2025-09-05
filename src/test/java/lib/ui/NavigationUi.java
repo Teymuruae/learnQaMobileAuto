@@ -2,19 +2,21 @@ package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
 
-public class NavigationUi extends MainPageObject {
+public abstract class NavigationUi extends MainPageObject {
 
-    private final String
-            MY_LIST_BUTTON = ID + "org.wikipedia:id/nav_tab_reading_lists",
-            IMAGE_BUTTON = XPATH + "//android.widget.ImageButton[@content-desc='Navigate up']";
+    private AppiumDriver driver;
+    protected static String
+            MY_LIST_BUTTON,
+            BACK_ARROW_BUTTON;
 
     public NavigationUi(AppiumDriver driver) {
         super(driver);
+        this.driver = driver;
     }
 
     public void navigateUp() {
         waitForElementAndClick(
-                IMAGE_BUTTON,
+                BACK_ARROW_BUTTON,
                 "Cant find 'Navigate up' button",
                 5
         );

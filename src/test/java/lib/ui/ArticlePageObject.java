@@ -92,27 +92,32 @@ public abstract class ArticlePageObject extends MainPageObject {
     }
 
     public ArticlePageObject addArticleToMyExistList(String folderName) {
-        WebElement saveButton = waitForElementAndClick(
-                SAVE_ARTICLE_BUTTON,
-                "Cant find save page button",
-                5
-        );
+        if (Platform.getInstance().isIos()) {
+            waitForElementAndClick(SAVE_ARTICLE_BUTTON, "Cannot find save article button", 5);
+        } else {
+            WebElement saveButton = waitForElementAndClick(
+                    SAVE_ARTICLE_BUTTON,
+                    "Cant find save page button",
+                    5
+            );
 
-        saveButton.click();
+            saveButton.click();
 
-        waitForElementAndClick(
-                ADD_TO_ANOTHER_LIST_BUTTON,
-                "Cant find 'Add to another reading list' button",
-                5
-        );
+            waitForElementAndClick(
+                    ADD_TO_ANOTHER_LIST_BUTTON,
+                    "Cant find 'Add to another reading list' button",
+                    5
+            );
 
-        waitForElementAndClick(
-                READING_LIST_FOLDER.formatted(folderName),
-                "Cant find reading list folder button by name %s".formatted(folderName),
-                5
-        );
+            waitForElementAndClick(
+                    READING_LIST_FOLDER.formatted(folderName),
+                    "Cant find reading list folder button by name %s".formatted(folderName),
+                    5
+            );
+        }
         return this;
     }
+
 
     public void toMainMenu(String title, int returnBackTimes) {
         final NavigationUi navigationUi = NavigationUiPageObjectFactory.get(driver);

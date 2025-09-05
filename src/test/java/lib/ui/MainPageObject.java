@@ -302,6 +302,12 @@ public class MainPageObject {
         return driver.findElements(by).size();
     }
 
+    public boolean isElementExist(String locator) {
+        final By by = getLocatorByString(locator);
+        List<WebElement> elements = driver.findElements(by);
+        return !elements.isEmpty();
+    }
+
     public void assertElementNotPresent(String locator, String errorMessage) {
         Assertions.assertTrue(getAmountOfElements(locator) == 0, errorMessage);
     }

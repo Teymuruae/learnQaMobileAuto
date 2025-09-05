@@ -68,13 +68,22 @@ public abstract class MyListPageObject extends MainPageObject {
         return this;
     }
 
-    public MyListPageObject assertAllArticleTitleTexts(String... articleTitle) {
-        for (String title : articleTitle) {
+    public MyListPageObject assertAllArticleTitleTexts(String... articleTitles) {
+        for (String title : articleTitles) {
             waitForArticleToAppearByTitle(title);
         }
 
-        final int expectedArticleSize = articleTitle.length;
-        final int actualArticlesSize = getAmountOfElements(ARTICLE_TITLES);
+        final int expectedArticleSize = articleTitles.length;
+        int actualArticlesSize = 0;
+
+        if (Platform.getInstance().isAndroid()) {
+            actualArticlesSize = getAmountOfElements(ARTICLE_TITLES);
+        } else {
+            for (String articleTitle : articleTitles) {
+                actualArticlesSize += getAmountOfElements(ARTICLE_TITLE.formatted(articleTitle));
+            }
+        }
+
         Assertions.assertEquals(expectedArticleSize, actualArticlesSize,
                 "size mismatch. Expected articles size: %d, actual: %d".formatted(expectedArticleSize, actualArticlesSize));
         return this;

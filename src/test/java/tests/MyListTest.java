@@ -53,27 +53,37 @@ public class MyListTest extends CoreTestCase {
         final String javaVersionHistoryArticleTitle = "Java version history";
 
         mainPageObject.skip();
+
         searchPageObject
                 .initSearchInput()
                 .typeSearchLine(javaArticleTitle)
                 .clickArticle(javaArticleTitle)
                 .waitForTitleElement(javaArticleTitle);
-        articlePageObject.addArticleToMyNewList(myListFolder);
+
+        articlePageObject
+                .addArticleToMyNewList(myListFolder)
+                .toMainMenu(javaArticleTitle, 2);
 
         searchPageObject
                 .initSearchInput()
                 .typeSearchLine(javaVersionHistoryArticleTitle)
                 .clickArticle(javaVersionHistoryArticleTitle)
                 .waitForTitleElement(javaVersionHistoryArticleTitle);
-        articlePageObject.addArticleToMyExistList(myListFolder);
 
-        for (int i = 0; i < 3; i++) {
-            navigationUi.navigateUp();
-        }
+        articlePageObject
+                .addArticleToMyExistList(myListFolder)
+                .toMainMenu(javaVersionHistoryArticleTitle, 2);
 
         navigationUi.clickMyList();
+
+        if (Platform.getInstance().isAndroid()) {
+            myListPageObject
+                    .openFolderByName(myListFolder);
+        } else {
+            myListPageObject.closeIosModalWindow();
+        }
+
         myListPageObject
-                .openFolderByName(myListFolder)
                 .assertAllArticleTitleTexts(javaArticleTitle, javaVersionHistoryArticleTitle)
                 .removeArticleByTitle(javaArticleTitle)
                 .assertAllArticleTitleTexts(javaVersionHistoryArticleTitle)

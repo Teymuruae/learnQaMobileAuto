@@ -22,6 +22,9 @@ public class MyListTest extends CoreTestCase {
     private NavigationUi navigationUi = NavigationUiPageObjectFactory.get(driver);
     private MyListPageObject myListPageObject = MyListPageObjectFactory.get(driver);
 
+    private final String LOGIN = "Teymuruae";
+    private final String PASSWORD = "rock5757rock";
+
     @Test
     void swipeLeftTest() {
         final String myListFolder = "JavaList";
@@ -40,22 +43,27 @@ public class MyListTest extends CoreTestCase {
             navigationUi
                     .openSideMenu()
                     .clickLoginButton();
-            loginPageObject.setLoginData("Teymuruae", "rock5757rock");
+            loginPageObject.setLoginData(LOGIN, PASSWORD);
             loginPageObject.clickLoginButton();
 
             articlePageObject.waitForTitleElement(articleTitle);
         }
 
-        articlePageObject
-                .addArticleToMyNewList(myListFolder)
-                .toMainMenu(articleTitle, 2);
+        articlePageObject.addArticleToMyNewList(myListFolder);
+
+        if (Platform.getInstance().isMobileWeb()) {
+            navigationUi.openSideMenu();
+        } else {
+            articlePageObject
+                    .toMainMenu(articleTitle, 2);
+        }
 
         navigationUi.clickMyList();
 
         if (Platform.getInstance().isAndroid()) {
             myListPageObject
                     .openFolderByName(myListFolder);
-        } else if (Platform.getInstance().isIos()){
+        } else if (Platform.getInstance().isIos()) {
             myListPageObject.closeIosModalWindow();
         }
 
@@ -77,9 +85,27 @@ public class MyListTest extends CoreTestCase {
                 .clickArticle(javaArticleTitle)
                 .waitForTitleElement(javaArticleTitle);
 
+        if (Platform.getInstance().isMobileWeb()) {
+            LoginPageObject loginPageObject = new LoginPageObject(driver);
+
+            navigationUi
+                    .openSideMenu()
+                    .clickLoginButton();
+            loginPageObject.setLoginData("Teymuruae", "rock5757rock");
+            loginPageObject.clickLoginButton();
+
+            articlePageObject.waitForTitleElement(javaArticleTitle);
+        }
+
         articlePageObject
-                .addArticleToMyNewList(myListFolder)
-                .toMainMenu(javaArticleTitle, 2);
+                .addArticleToMyNewList(myListFolder);
+
+        if (Platform.getInstance().isMobileWeb()) {
+            articlePageObject.swipeToTitle(javaArticleTitle);
+        } else {
+            articlePageObject
+                    .toMainMenu(javaArticleTitle, 2);
+        }
 
         searchPageObject
                 .initSearchInput()
@@ -88,8 +114,14 @@ public class MyListTest extends CoreTestCase {
                 .waitForTitleElement(javaVersionHistoryArticleTitle);
 
         articlePageObject
-                .addArticleToMyExistList(myListFolder)
-                .toMainMenu(javaVersionHistoryArticleTitle, 2);
+                .addArticleToMyExistList(myListFolder);
+
+        if (Platform.getInstance().isMobileWeb()) {
+            navigationUi.openSideMenu();
+        } else {
+            articlePageObject
+                    .toMainMenu(javaVersionHistoryArticleTitle, 2);
+        }
 
         navigationUi.clickMyList();
 

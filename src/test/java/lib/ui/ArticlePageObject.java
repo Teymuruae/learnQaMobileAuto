@@ -104,6 +104,12 @@ public abstract class ArticlePageObject extends MainPageObject {
 
     public ArticlePageObject addArticleToMyExistList(String folderName) {
         if (Platform.getInstance().isIos() || Platform.getInstance().isMobileWeb()) {
+
+            if (Platform.getInstance().isMobileWeb()) {
+                swipeToTitle("");
+                removeArticleFromSavedIfItAdded();
+            }
+
             waitForElementAndClick(SAVE_ARTICLE_BUTTON, "Cannot find save article button", 5);
         } else {
             WebElement saveButton = waitForElementAndClick(
@@ -139,20 +145,16 @@ public abstract class ArticlePageObject extends MainPageObject {
     public void toMainMenu(String title, int returnBackTimes) {
         final NavigationUi navigationUi = NavigationUiPageObjectFactory.get(driver);
 
-        if (Platform.getInstance().isMobileWeb()) {
-            navigationUi.openSideMenu();
+        swipeToTitle(title);
+        if (Platform.getInstance().isIos()) {
+            final SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
+            for (int i = 0; i < returnBackTimes - 1; i++) {
+                navigationUi.navigateUp();
+            }
+            searchPageObject.clickSearchCancelButton();
         } else {
-            swipeToTitle(title);
-            if (Platform.getInstance().isIos()) {
-                final SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
-                for (int i = 0; i < returnBackTimes - 1; i++) {
-                    navigationUi.navigateUp();
-                }
-                searchPageObject.clickSearchCancelButton();
-            } else {
-                for (int i = 0; i < returnBackTimes; i++) {
-                    navigationUi.navigateUp();
-                }
+            for (int i = 0; i < returnBackTimes; i++) {
+                navigationUi.navigateUp();
             }
         }
     }

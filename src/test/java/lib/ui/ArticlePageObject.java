@@ -1,18 +1,19 @@
 package lib.ui;
 
-import io.appium.java_client.AppiumDriver;
 import lib.Platform;
 import lib.ui.factories.NavigationUiPageObjectFactory;
 import lib.ui.factories.SearchPageObjectFactory;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public abstract class ArticlePageObject extends MainPageObject {
 
-    private final AppiumDriver driver;
+    private final RemoteWebDriver driver;
 
     protected static String
             FOOTER_ELEMENT,
             SAVE_ARTICLE_BUTTON,
+            REMOVE_ARTICLE_BUTTON,
             ADD_TO_ANOTHER_LIST_BUTTON,
             CREATE_NEW_READING_LIST_BUTTON,
             NAME_OF_READING_LIST_INPUT_FIELD,
@@ -20,7 +21,7 @@ public abstract class ArticlePageObject extends MainPageObject {
             READING_LIST_FOLDER,
             TITLE;
 
-    public ArticlePageObject(AppiumDriver driver) {
+    public ArticlePageObject(RemoteWebDriver driver) {
         super(driver);
         this.driver = driver;
     }
@@ -36,8 +37,10 @@ public abstract class ArticlePageObject extends MainPageObject {
     public ArticlePageObject swipeToFooter() {
         if (Platform.getInstance().isAndroid()) {
             swipeToFindElement(FOOTER_ELEMENT, "Cant find the end of the article", Direction.UP);
-        } else {
+        } else if (Platform.getInstance().isIos()) {
             swipeTillElementAppear(FOOTER_ELEMENT, "Cant find the end of the article", 40, Direction.UP);
+        } else {
+            scrollWebPageTillElementNotVisible(FOOTER_ELEMENT, "Cant find the end of the article", 40, Direction.UP);
         }
         return this;
     }
@@ -45,14 +48,22 @@ public abstract class ArticlePageObject extends MainPageObject {
     public ArticlePageObject swipeToTitle(String title) {
         if (Platform.getInstance().isAndroid()) {
             swipeToFindElement(TITLE.formatted(title), "Cant find the title of the article", Direction.DOWN);
-        } else {
+        } else if (Platform.getInstance().isIos()) {
             swipeTillElementAppear(TITLE.formatted(title), "Cant find the title of the article", 40, Direction.DOWN);
+        } else {
+            scrollWebPageTillElementNotVisible(TITLE, "Cant find the end of the article", 40, Direction.DOWN);
         }
         return this;
     }
 
     public ArticlePageObject addArticleToMyNewList(String folderName) {
-        if (Platform.getInstance().isIos()) {
+        if (Platform.getInstance().isIos() || Platform.getInstance().isMobileWeb()) {
+
+            if (Platform.getInstance().isMobileWeb()) {
+                swipeToTitle("");
+                removeArticleFromSavedIfItAdded();
+            }
+
             waitForElementAndClick(SAVE_ARTICLE_BUTTON, "Cannot find save article button", 5);
         } else {
             WebElement saveButton = waitForElementAndClick(
@@ -92,7 +103,7 @@ public abstract class ArticlePageObject extends MainPageObject {
     }
 
     public ArticlePageObject addArticleToMyExistList(String folderName) {
-        if (Platform.getInstance().isIos()) {
+        if (Platform.getInstance().isIos() || Platform.getInstance().isMobileWeb()) {
             waitForElementAndClick(SAVE_ARTICLE_BUTTON, "Cannot find save article button", 5);
         } else {
             WebElement saveButton = waitForElementAndClick(
@@ -118,20 +129,30 @@ public abstract class ArticlePageObject extends MainPageObject {
         return this;
     }
 
+    public void removeArticleFromSavedIfItAdded() {
+        if (isElementExist(REMOVE_ARTICLE_BUTTON)) {
+            waitForElementAndClick(REMOVE_ARTICLE_BUTTON, "cant find remove article button", 5);
+        }
+        waitForElementPresent(SAVE_ARTICLE_BUTTON, "cant find save article button");
+    }
 
     public void toMainMenu(String title, int returnBackTimes) {
         final NavigationUi navigationUi = NavigationUiPageObjectFactory.get(driver);
 
-        swipeToTitle(title);
-        if (Platform.getInstance().isIos()) {
-            final SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
-            for (int i = 0; i < returnBackTimes - 1; i++) {
-                navigationUi.navigateUp();
-            }
-            searchPageObject.clickSearchCancelButton();
+        if (Platform.getInstance().isMobileWeb()) {
+            navigationUi.openSideMenu();
         } else {
-            for (int i = 0; i < returnBackTimes; i++) {
-                navigationUi.navigateUp();
+            swipeToTitle(title);
+            if (Platform.getInstance().isIos()) {
+                final SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
+                for (int i = 0; i < returnBackTimes - 1; i++) {
+                    navigationUi.navigateUp();
+                }
+                searchPageObject.clickSearchCancelButton();
+            } else {
+                for (int i = 0; i < returnBackTimes; i++) {
+                    navigationUi.navigateUp();
+                }
             }
         }
     }

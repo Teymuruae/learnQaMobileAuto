@@ -2,7 +2,12 @@ package tests;
 
 import lib.CoreTestCase;
 import lib.Platform;
-import lib.ui.*;
+import lib.ui.ArticlePageObject;
+import lib.ui.LoginPageObject;
+import lib.ui.MainPageObject;
+import lib.ui.MyListPageObject;
+import lib.ui.NavigationUi;
+import lib.ui.SearchPageObject;
 import lib.ui.factories.ArticlePageObjectFactory;
 import lib.ui.factories.MyListPageObjectFactory;
 import lib.ui.factories.NavigationUiPageObjectFactory;
@@ -29,6 +34,18 @@ public class MyListTest extends CoreTestCase {
                 .clickArticle("Object-oriented programming language")
                 .waitForTitleElement(articleTitle);
 
+        if (Platform.getInstance().isMobileWeb()) {
+            LoginPageObject loginPageObject = new LoginPageObject(driver);
+
+            navigationUi
+                    .openSideMenu()
+                    .clickLoginButton();
+            loginPageObject.setLoginData("Teymuruae", "rock5757rock");
+            loginPageObject.clickLoginButton();
+
+            articlePageObject.waitForTitleElement(articleTitle);
+        }
+
         articlePageObject
                 .addArticleToMyNewList(myListFolder)
                 .toMainMenu(articleTitle, 2);
@@ -38,7 +55,7 @@ public class MyListTest extends CoreTestCase {
         if (Platform.getInstance().isAndroid()) {
             myListPageObject
                     .openFolderByName(myListFolder);
-        } else {
+        } else if (Platform.getInstance().isIos()){
             myListPageObject.closeIosModalWindow();
         }
 

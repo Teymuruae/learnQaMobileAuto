@@ -1,18 +1,19 @@
 package lib.ui.ios;
 
-import io.appium.java_client.AppiumDriver;
 import lib.ui.SearchPageObject;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class IosSearchPageObject extends SearchPageObject {
 
 
-    public IosSearchPageObject(AppiumDriver driver) {
+    public IosSearchPageObject(RemoteWebDriver driver) {
         super(driver);
     }
 
     static {
+        SEARCH_INIT_ELEMENT = XPATH + "//XCUIElementTypeSearchField[@name='Поиск по Википедии']";
         SEARCH_RESULT_LIST_ELEMENTS = XPATH + "//XCUIElementTypeOther[2]//XCUIElementTypeCell";
-        SEARCH_INPUT_FIELD = XPATH + "//XCUIElementTypeSearchField[@name='Поиск по Википедии']";
+        SEARCH_INPUT_FIELD = SEARCH_INIT_ELEMENT;
         SEARCH_REMOVE_X_BUTTON = ID + "Очистить текст";
         SEARCH_RESULT_EMPTY_LABEL = XPATH + "//XCUIElementTypeStaticText[@name='Ничего не найдено']";
         SEARCH_RESULT = XPATH + "//XCUIElementTypeStaticText[@name='%s']";

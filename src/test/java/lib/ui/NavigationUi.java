@@ -1,15 +1,18 @@
 package lib.ui;
 
-import io.appium.java_client.AppiumDriver;
+import lib.Platform;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public abstract class NavigationUi extends MainPageObject {
 
-    private AppiumDriver driver;
+    private RemoteWebDriver driver;
     protected static String
             MY_LIST_BUTTON,
-            BACK_ARROW_BUTTON;
+            BACK_ARROW_BUTTON,
+            OPEN_SIDE_MENU_BUTTON,
+            LOGIN_BUTTON;
 
-    public NavigationUi(AppiumDriver driver) {
+    public NavigationUi(RemoteWebDriver driver) {
         super(driver);
         this.driver = driver;
     }
@@ -23,10 +26,29 @@ public abstract class NavigationUi extends MainPageObject {
     }
 
     public void clickMyList() {
-        waitForElementAndClick(
-                MY_LIST_BUTTON,
-                "Cant find navigate button to my list",
-                5
-        );
+        if (Platform.getInstance().isMobileWeb()) {
+            tryClickElementWithFewAttempts(MY_LIST_BUTTON,
+                    "Cant find navigate button to my list",
+                    5);
+        } else {
+            waitForElementAndClick(
+                    MY_LIST_BUTTON,
+                    "Cant find navigate button to my list",
+                    5
+            );
+        }
+    }
+
+    public NavigationUi openSideMenu() {
+        if (Platform.getInstance().isMobileWeb()) {
+            waitForElementAndClick(OPEN_SIDE_MENU_BUTTON, "Cant find open side menu button", 5);
+        }
+        return this;
+    }
+
+    public void clickLoginButton() {
+        if (Platform.getInstance().isMobileWeb()) {
+            tryClickElementWithFewAttempts(LOGIN_BUTTON, "Cannot find login button in side menu", 5);
+        }
     }
 }

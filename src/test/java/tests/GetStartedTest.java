@@ -11,7 +11,7 @@ public class GetStartedTest extends CoreTestCase {
 
     @Test
     void passThroughWelcomeTest() {
-        if (Platform.getInstance().isAndroid()) {
+        if (Platform.getInstance().isAndroid() || Platform.getInstance().isMobileWeb()) {
             return;
         }
         welcomePageObject

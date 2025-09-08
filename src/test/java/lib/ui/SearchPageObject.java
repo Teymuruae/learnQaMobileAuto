@@ -3,12 +3,14 @@ package lib.ui;
 import io.appium.java_client.AppiumDriver;
 import lib.ui.factories.ArticlePageObjectFactory;
 import org.junit.jupiter.api.Assertions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public abstract class SearchPageObject extends MainPageObject {
 
-    private AppiumDriver driver;
+    private RemoteWebDriver driver;
 
     protected static String
+            SEARCH_INIT_ELEMENT,
             SEARCH_RESULT_LIST_ELEMENTS,
             SEARCH_INPUT_FIELD,
             SEARCH_REMOVE_X_BUTTON,
@@ -17,13 +19,13 @@ public abstract class SearchPageObject extends MainPageObject {
             SEARCH_CANCEL_BUTTON,
             SEARCH_RESULT_BY_TITLE_AND_DESC;
 
-    public SearchPageObject(AppiumDriver driver) {
+    public SearchPageObject(RemoteWebDriver driver) {
         super(driver);
         this.driver = driver;
     }
 
     public SearchPageObject initSearchInput() {
-        waitForElementAndClick(SEARCH_INPUT_FIELD, "cant find and click search input field", 5);
+        waitForElementAndClick(SEARCH_INIT_ELEMENT, "cant find and click search input field", 5);
         return this;
     }
 

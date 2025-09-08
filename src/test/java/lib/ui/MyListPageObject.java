@@ -1,9 +1,9 @@
 package lib.ui;
 
-import io.appium.java_client.AppiumDriver;
 import lib.Platform;
 import lib.ui.factories.ArticlePageObjectFactory;
 import org.junit.jupiter.api.Assertions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public abstract class MyListPageObject extends MainPageObject {
 
@@ -13,11 +13,12 @@ public abstract class MyListPageObject extends MainPageObject {
             ARTICLE_TITLE,
             ARTICLE_TITLES,
             EDIT_BUTTON, //кнопка "Править". Есть только в ios;
-            DONT_SAVE_BUTTON;
+            DONT_SAVE_BUTTON,
+            REMOVE_STAR_BUTTON;
 
-    private AppiumDriver driver;
+    private RemoteWebDriver driver;
 
-    public MyListPageObject(AppiumDriver driver) {
+    public MyListPageObject(RemoteWebDriver driver) {
         super(driver);
         this.driver = driver;
     }
@@ -49,7 +50,7 @@ public abstract class MyListPageObject extends MainPageObject {
         final String savedPage = ARTICLE_DESCRIPTION.formatted(articleDescription);
 
         waitForArticleToAppearByDescription(articleDescription);
-        swipeLeft2(savedPage, "Cant find '%s' saved page".formatted(articleDescription));
+        swipeLeft(savedPage, "Cant find '%s' saved page".formatted(articleDescription));
         waitForArticleToDisappearByDescription(articleDescription);
         return this;
     }
@@ -100,11 +101,14 @@ public abstract class MyListPageObject extends MainPageObject {
 
         waitForArticleToAppearByTitle(articleTitle);
         if (Platform.getInstance().isAndroid()) {
-            swipeLeft2(savedPage, "Cant find '%s' saved page".formatted(articleTitle));
-        } else {
+            swipeLeft(savedPage, "Cant find '%s' saved page".formatted(articleTitle));
+        } else if (Platform.getInstance().isIos()) {
             waitForElementAndClick(EDIT_BUTTON, "Edit button not found", 5);
             enterArticleByTitle(articleTitle);
             waitForElementAndClick(DONT_SAVE_BUTTON, "Dont save button not fount", 5);
+        } else if (Platform.getInstance().isMobileWeb()) {
+            waitForElementAndClick(REMOVE_STAR_BUTTON.formatted(articleTitle), "Cant find remove star button", 5);
+            driver.navigate().refresh();
         }
 
         waitForArticleToDisappearByTitle(articleTitle);

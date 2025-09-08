@@ -1,17 +1,25 @@
 package lib.ui;
 
 import io.appium.java_client.MobileElement;
+import io.qameta.allure.Attachment;
+import io.qameta.allure.Step;
 import lib.Platform;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -71,16 +79,16 @@ public class MainPageObject {
         return element;
     }
 
-    public void tryClickElementWithFewAttempts(String locator, String errorMessage, int amountOfAttempts){
+    public void tryClickElementWithFewAttempts(String locator, String errorMessage, int amountOfAttempts) {
         int currentAttempts = 0;
         boolean needMoreAttempts = true;
 
-        while (needMoreAttempts){
+        while (needMoreAttempts) {
             try {
                 waitForElementAndClick(locator, errorMessage, 2);
                 needMoreAttempts = false;
-            } catch (Exception e){
-                if (currentAttempts > amountOfAttempts){
+            } catch (Exception e) {
+                if (currentAttempts > amountOfAttempts) {
                     waitForElementAndClick(locator, errorMessage, 2);
                 }
             }
@@ -373,6 +381,7 @@ public class MainPageObject {
         }
     }
 
+    @Step("Закрытие модального окна")
     public void closeIosModalWindow() {
         String closeButtonLocator = XPATH + "//XCUIElementTypeButton[@name='Закрыть']";
 
@@ -380,5 +389,30 @@ public class MainPageObject {
         if (driver.findElements(closeButton).size() > 0) {
             waitForElementAndClick(closeButtonLocator, "cant find modal window close button", 5);
         }
+    }
+
+    public String takeScreenshot(String name) {
+        final TakesScreenshot ts = (TakesScreenshot) driver;
+        File source = ts.getScreenshotAs(OutputType.FILE);
+        final String path = System.getProperty("user.dir") + "/" + name + "_screenshot.png";
+
+        try {
+            FileUtils.copyFile(source, new File(path));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return path;
+    }
+
+    @Attachment
+    public static byte[] screenshot(String path) {
+        byte[] bytes = new byte[0];
+
+        try {
+           bytes = Files.readAllBytes(Path.of(path));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bytes;
     }
 }

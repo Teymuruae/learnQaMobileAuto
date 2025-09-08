@@ -8,7 +8,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import java.io.FileOutputStream;
 import java.time.Duration;
+import java.util.Properties;
 
 public class CoreTestCase {
 
@@ -18,6 +20,7 @@ public class CoreTestCase {
     public static void setUp() throws Exception {
         WebDriverManager.chromedriver().setup();
         driver = Platform.getInstance().getDriver();
+        createAllurePropertyFile();
         rotateScreenPortrait();
     }
 
@@ -55,6 +58,18 @@ public class CoreTestCase {
     protected void openWikiWebPageForMobileWeb() {
         if (Platform.getInstance().isMobileWeb()) {
             driver.get("https://en.m.wikipedia.org");
+        }
+    }
+
+    private static void createAllurePropertyFile() {
+        final String path = System.getProperty("allure.results.directory");
+
+        try (FileOutputStream fos = new FileOutputStream(path + "/environment.properties")) {
+            final Properties properties = new Properties();
+            properties.setProperty("Environment", Platform.getInstance().getPlatformValue());
+            properties.store(fos, "see github");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

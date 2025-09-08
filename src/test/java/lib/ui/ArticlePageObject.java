@@ -1,5 +1,6 @@
 package lib.ui;
 
+import io.qameta.allure.Step;
 import lib.Platform;
 import lib.ui.factories.NavigationUiPageObjectFactory;
 import lib.ui.factories.SearchPageObjectFactory;
@@ -26,14 +27,17 @@ public abstract class ArticlePageObject extends MainPageObject {
         this.driver = driver;
     }
 
+    @Step("Ожидание появление заголовка {title}")
     public WebElement waitForTitleElement(String title) {
         return waitForElementPresent(TITLE.formatted(title), "Cant find article title %s on page".formatted(title), 10);
     }
 
+    @Step("Проверка наличия заголовка {title}")
     public void assertTitleIsPresent(String title) {
         assertElementIsPresent(TITLE.formatted(title), "Cannot find title " + title);
     }
 
+    @Step("Прокрутка до футера")
     public ArticlePageObject swipeToFooter() {
         if (Platform.getInstance().isAndroid()) {
             swipeToFindElement(FOOTER_ELEMENT, "Cant find the end of the article", Direction.UP);
@@ -45,6 +49,7 @@ public abstract class ArticlePageObject extends MainPageObject {
         return this;
     }
 
+    @Step("Прокрутка до заголовка")
     public ArticlePageObject swipeToTitle(String title) {
         if (Platform.getInstance().isAndroid()) {
             swipeToFindElement(TITLE.formatted(title), "Cant find the title of the article", Direction.DOWN);
@@ -56,6 +61,7 @@ public abstract class ArticlePageObject extends MainPageObject {
         return this;
     }
 
+    @Step("Добавление статьи в новый лист")
     public ArticlePageObject addArticleToMyNewList(String folderName) {
         if (Platform.getInstance().isIos() || Platform.getInstance().isMobileWeb()) {
 
@@ -102,6 +108,7 @@ public abstract class ArticlePageObject extends MainPageObject {
         return this;
     }
 
+    @Step("Добавление статьи в существующий лист")
     public ArticlePageObject addArticleToMyExistList(String folderName) {
         if (Platform.getInstance().isIos() || Platform.getInstance().isMobileWeb()) {
 
@@ -135,6 +142,7 @@ public abstract class ArticlePageObject extends MainPageObject {
         return this;
     }
 
+    @Step("Удаление статьи из листа, если была добалена")
     public void removeArticleFromSavedIfItAdded() {
         if (isElementExist(REMOVE_ARTICLE_BUTTON)) {
             waitForElementAndClick(REMOVE_ARTICLE_BUTTON, "cant find remove article button", 5);
@@ -142,6 +150,7 @@ public abstract class ArticlePageObject extends MainPageObject {
         waitForElementPresent(SAVE_ARTICLE_BUTTON, "cant find save article button");
     }
 
+    @Step("Переход на главную")
     public void toMainMenu(String title, int returnBackTimes) {
         final NavigationUi navigationUi = NavigationUiPageObjectFactory.get(driver);
 
